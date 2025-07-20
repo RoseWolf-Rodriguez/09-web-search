@@ -25,8 +25,7 @@ topicSelect.addEventListener('change', async () => {
         model: 'gpt-4o-search-preview',
         web_search_options: {
           search_context_size: "medium",
-        }
-
+        }, // <-- Added missing comma here
         messages: [
           {
             role: 'system',
