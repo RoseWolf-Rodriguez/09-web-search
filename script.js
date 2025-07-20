@@ -22,12 +22,15 @@ topicSelect.addEventListener('change', async () => {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-search-preview',
+        web_search_options: {
+          search_context_size: "medium",
+        }
 
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful assistant that summarizes recent stories about the provided topic from this week. Keep your answers brief, clear, and engaging for a general audience.'
+            content: 'You are a helpful assistant that summarizes recent stories about the provided topic from this week. Keep your answers brief, clear, and engaging for a general audience. Include ONLY US-based stories.'
           },
           {
             role: 'user',
@@ -42,10 +45,18 @@ topicSelect.addEventListener('change', async () => {
     
     // Format and update the UI with the response
     const text = data.choices[0].message.content;
+
+    // Function to turn URLs into clickable links
+    function linkify(text) {
+      // Regex to match URLs (http or https)
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+    }
+
     const formattedText = text
       .split('\n\n')  // Split into paragraphs
       .filter(para => para.trim() !== '')  // Remove empty paragraphs
-      .map(para => `<p>${para}</p>`)  // Wrap in p tags
+      .map(para => `<p>${linkify(para)}</p>`)  // Wrap in p tags and linkify
       .join('');
     
     responseDiv.innerHTML = formattedText;
